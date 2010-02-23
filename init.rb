@@ -11,9 +11,8 @@ module Heroku::Command
     def push
       display "THIS WILL REPLACE ALL DATA ON #{heroku_mongo_uri.host} WITH #{local_mongo_uri.host}"
       display "Are you sure? (y/n) ", false
-      if ask.downcase == 'y'
-        transfer(local_mongo_uri, heroku_mongo_uri)
-      end
+      return unless ask.downcase == 'y'
+      transfer(local_mongo_uri, heroku_mongo_uri)
     end
 
     def pull
