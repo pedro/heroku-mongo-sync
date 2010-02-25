@@ -63,6 +63,8 @@ module Heroku::Command
         db = connection.db(uri.path.gsub(/^\//, ''))
         db.authenticate(uri.user, uri.password) if uri.user
         db
+      rescue ::Mongo::ConnectionFailure
+        error("Could not connect to the mongo server at #{uri}")
       end
 
       Help.group 'Mongo' do |group|

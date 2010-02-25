@@ -13,6 +13,12 @@ describe Heroku::Command::Mongo do
     @mongo.stubs(:app).returns('myapp')
   end
 
+  it "rescues exceptions when establishing a connection" do
+    @mongo.expects(:error)
+    Mongo::Connection.stubs(:new).raises(Mongo::ConnectionFailure)
+    @mongo.send(:make_connection, URI.parse('mongo://localhost'))
+  end
+
   it "rejects urls without host" do
     @mongo.expects(:error)
     @mongo.send(:make_uri, 'test')
