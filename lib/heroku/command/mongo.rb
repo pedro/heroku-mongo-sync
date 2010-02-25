@@ -52,7 +52,7 @@ module Heroku::Command
       def make_uri(url)
         url.gsub!('aws.mongohq.com', 'genesis.mongohq.com')
         uri = URI.parse(url)
-        error("Invalid mongo url: #{url}") unless uri.host
+        raise URI::InvalidURIError unless uri.host
         uri
       rescue URI::InvalidURIError
         error("Invalid mongo url: #{url}")
