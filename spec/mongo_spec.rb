@@ -11,6 +11,7 @@ describe Heroku::Command::Mongo do
   before do
     @mongo = Heroku::Command::Mongo.new ['--app', 'myapp']
     @mongo.stubs(:app).returns('myapp')
+    @mongo.stubs(:display)
   end
 
   it "rescues exceptions when establishing a connection" do
@@ -32,5 +33,45 @@ describe Heroku::Command::Mongo do
   it "fixes mongohq addresses so it can connect from outside EC2" do
     uri = @mongo.send(:make_uri, 'mongo://root:secret@aws.mongohq.com/mydb')
     uri.host.should == 'genesis.mongohq.com'
+  end
+
+  describe "Integration test" do
+    before do
+      conn = Mongo::Connection.new
+      @from     = conn.db('heroku-mongo-sync-origin')
+      @from_uri = URI.parse('mongo://localhost/heroku-mongo-sync-origin')
+      @to       = conn.db('heroku-mongo-sync-dest')
+      @to_uri   = URI.parse('mongo://localhost/heroku-mongo-sync-dest')
+      clear_collections
+    end
+
+    after do
+      clear_collections
+    end
+
+    def clear_collections
+      @from.collections.each { |c| c.drop }
+      @to.collections.each { |c| c.drop }
+    end
+
+    it "transfers records" do
+      col = @from.create_collection('a')
+      col.insert(:id => 1, :name => 'first')
+      col.insert(:id => 2, :name => 'second')
+
+      @mongo.send(:transfer, @from_uri, @to_uri)
+      @to.collection_names.should.include('a')
+      @to.collection('a').find_one(:id => 1)['name'].should == 'first'
+    end
+
+    it "replaces existing data" do
+      col1 = @from.create_collection('a')
+      col1.insert(:id => 1, :name => 'first')
+      col2 = @to.create_collection('a')
+      col2.insert(:id => 2, :name => 'second')
+
+      @mongo.send(:transfer, @from_uri, @to_uri)
+      @to.collection('a').size.should == 1
+    end
   end
 end
