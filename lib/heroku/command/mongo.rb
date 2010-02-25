@@ -9,14 +9,14 @@ module Heroku::Command
     end
 
     def push
-      display "THIS WILL REPLACE ALL DATA ON #{heroku_mongo_uri.host} WITH #{local_mongo_uri.host}"
+      display "THIS WILL REPLACE ALL DATA for #{app} ON #{heroku_mongo_uri.host} WITH #{local_mongo_uri.host}"
       display "Are you sure? (y/n) ", false
       return unless ask.downcase == 'y'
       transfer(local_mongo_uri, heroku_mongo_uri)
     end
 
     def pull
-      display "Replacing the database at #{local_mongo_uri.host} with #{heroku_mongo_uri.host}"
+      display "Replacing the #{app} db at #{local_mongo_uri.host} with #{heroku_mongo_uri.host}"
       transfer(heroku_mongo_uri, local_mongo_uri)
     end
 
