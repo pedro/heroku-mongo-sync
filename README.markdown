@@ -3,43 +3,57 @@
 This is a plugin for the Heroku command line, adding commands to sync your
 local and production mongo databases.
 
+It was tested and should just work with Mongo HQ. If you host your mongo db
+somewhere else, just make sure you have access from your local machine.
+
 ## Installation
 
     $ heroku plugins:install http://github.com/pedro/heroku-mongo-sync.git
 
 ## Config
 
-The plugin assumes your local mongo db is on the URL specified by MONGO_URL.
-Set it using the url format, like:
+The plugin assumes your local mongo db is running on your localhost with the
+standard settings (port 27017, no auth). It will use a database named after
+the current Heroku app name.
 
-    export MONGO_URL = mongo://user:pass@localhost:27017/db
+You can change any of these defining the URL it should connect to, like:
 
-If not present, it will attempt to connect to localhost:27017, without auth,
-using the db named after the current Heroku app name.
+    export MONGO_URL = mongo://user:pass@localhost:1234/db
 
-For production, it fetches the MONGO_URL from the Heroku app config vars.
+For production, it will fetch the MONGO_URL from the Heroku app config vars.
 
 ## Usage
 
 Get a copy of your production database with:
 
     $ heroku mongo:pull
-    Replacing the database at localhost with genesis.mongohq.com
-    Syncing users... done
-    Syncing permissions... done
-    Syncing plans... done
+    Replacing the myapp db at localhost with genesis.mongohq.com
+    Syncing users (4)... done
+    Syncing permissions (4)... done
+    Syncing plans (17)... done
 
 Update your production database with:
 
     $ heroku mongo:push
-    THIS WILL REPLACE ALL DATA ON genesis.mongohq.com WITH localhost
+    THIS WILL REPLACE ALL DATA FOR myapp ON genesis.mongohq.com WITH localhost
     Are you sure? (y/n) y
-    Syncing users... done
-    Syncing permissions... done
-    Syncing plans... done
+    Syncing users (4)... done
+    Syncing permissions (4)... done
+    Syncing plans (17)... done
+
+As usual, in case you're not inside the app checkout you can specify the app
+you want to pull/push to:
+
+    $ heroku mongo:pull --app myapp-staging
+
+If you're inside a checkout with multiple apps deployed, you can also specify
+the one to pull/push to by the git remote:
+
+    $ heroku mongo:pull --remote staging
+
 
 ## Notes
 
-Use at your risk.
+Use at your own risk.
 
 Created by Pedro Belo
