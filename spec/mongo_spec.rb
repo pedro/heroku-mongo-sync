@@ -31,8 +31,8 @@ describe Heroku::Command::Mongo do
   end
 
   it "fixes mongohq addresses so it can connect from outside EC2" do
-    uri = @mongo.send(:make_uri, 'mongo://root:secret@aws.mongohq.com/mydb')
-    uri.host.should == 'genesis.mongohq.com'
+    uri = @mongo.send(:make_uri, 'mongo://root:secret@hatch.local.mongohq.com/mydb')
+    uri.host.should == 'hatch.mongohq.com'
   end
 
   describe "Integration test" do
