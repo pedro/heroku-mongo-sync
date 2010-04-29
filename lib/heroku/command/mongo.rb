@@ -26,8 +26,6 @@ module Heroku::Command
         dest   = make_connection(to)
 
         origin.collections.each do |col|
-          next if col.name =~ /^system\./
-
           display "Syncing #{col.name} (#{col.size})...", false
           dest.drop_collection(col.name)
           dest_col = dest.create_collection(col.name)
