@@ -26,6 +26,8 @@ module Heroku::Command
         dest   = make_connection(to)
 
         origin.collections.each do |col|
+          next if col.name =~ /^system\./
+
           display "Syncing #{col.name} (#{col.size})...", false
           dest.drop_collection(col.name)
           dest_col = dest.create_collection(col.name)
@@ -33,6 +35,16 @@ module Heroku::Command
             dest_col.insert record
           end
           display " done"
+        end
+
+        display "Syncing users..."
+        dest_user_col = dest.collection('system.users')
+        origin_user_col = origin.collection('system.users')
+        dest_user_col.find().each do |user|
+          dest.remove_user(user['user'])
+        end
+        origin_user_col.find().each do |user|
+          dest_user_col.insert user
         end
       end
 
