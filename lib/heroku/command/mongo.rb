@@ -37,7 +37,17 @@ module Heroku::Command
           display " done"
         end
 
-        display "Syncing users..."
+        display "Syncing indexes...", false
+        dest_index_col = dest.collection('system.indexes')
+        origin_index_col = origin.collection('system.indexes')
+        origin_index_col.find().each do |index|
+          if index['_id']
+            dest_index_col.insert index
+          end
+        end
+        display " done"
+
+        display "Syncing users...", false
         dest_user_col = dest.collection('system.users')
         origin_user_col = origin.collection('system.users')
         dest_user_col.find().each do |user|
@@ -46,6 +56,7 @@ module Heroku::Command
         origin_user_col.find().each do |user|
           dest_user_col.insert user
         end
+        display " done"
       end
 
       def heroku_mongo_uri
