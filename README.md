@@ -54,6 +54,7 @@ the one to pull/push to by the git remote:
 
 ## Notes
 
-Use at your own risk.
+Created by Pedro Belo. 
+Support for indexes, users and more added by Ben Wyrosdick.
 
-Created by Pedro Belo
+Use at your own risk.
