@@ -41,7 +41,10 @@ module Heroku::Command
         dest_index_col = dest.collection('system.indexes')
         origin_index_col = origin.collection('system.indexes')
         origin_index_col.find().each do |index|
-          dest_index_col.insert index
+          if index['_id']
+            index['ns'] = index['ns'].sub(origin_index_col.db.name, dest_index_col.db.name)
+            dest_index_col.insert index
+          end
         end
         display " done"
 
