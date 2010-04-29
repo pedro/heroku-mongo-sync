@@ -41,9 +41,7 @@ module Heroku::Command
         dest_index_col = dest.collection('system.indexes')
         origin_index_col = origin.collection('system.indexes')
         origin_index_col.find().each do |index|
-          if index['_id']
-            dest_index_col.insert index
-          end
+          dest_index_col.insert index
         end
         display " done"
 
