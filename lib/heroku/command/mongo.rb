@@ -48,6 +48,8 @@ module Heroku::Command
         end
         display " done"
 
+        display "Do you want to replace the users also? (y/n) ", false
+        return unless ask.downcase == 'y'
         display "Syncing users...", false
         dest_user_col = dest.collection('system.users')
         origin_user_col = origin.collection('system.users')
