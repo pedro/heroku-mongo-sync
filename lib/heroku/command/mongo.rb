@@ -47,19 +47,6 @@ module Heroku::Command
           end
         end
         display " done"
-
-        display "Do you want to replace the users also? (y/n) ", false
-        return unless ask.downcase == 'y'
-        display "Syncing users...", false
-        dest_user_col = dest.collection('system.users')
-        origin_user_col = origin.collection('system.users')
-        dest_user_col.find().each do |user|
-          dest.remove_user(user['user'])
-        end
-        origin_user_col.find().each do |user|
-          dest_user_col.insert user
-        end
-        display " done"
       end
 
       def heroku_mongo_uri
