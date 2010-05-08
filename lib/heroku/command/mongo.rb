@@ -57,7 +57,7 @@ module Heroku::Command
       end
 
       def local_mongo_uri
-        url = ENV['MONGO_URL'] || "mongo://localhost:27017/#{app}"
+        url = ENV['MONGO_URL'] || "mongodb://localhost:27017/#{app}"
         make_uri(url)
       end
 

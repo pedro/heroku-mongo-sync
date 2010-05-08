@@ -18,7 +18,7 @@ the current Heroku app name.
 
 You can change any of these defining the URL it should connect to, like:
 
-    export MONGO_URL = mongo://user:pass@localhost:1234/db
+    export MONGO_URL = mongodb://user:pass@localhost:1234/db
 
 For production, it will fetch the MONGO_URL from the Heroku app config vars.
 

@@ -17,7 +17,7 @@ describe Heroku::Command::Mongo do
   it "rescues exceptions when establishing a connection" do
     @mongo.expects(:error)
     Mongo::Connection.stubs(:new).raises(Mongo::ConnectionFailure)
-    @mongo.send(:make_connection, URI.parse('mongo://localhost'))
+    @mongo.send(:make_connection, URI.parse('mongodb://localhost'))
   end
 
   it "rejects urls without host" do
@@ -31,7 +31,7 @@ describe Heroku::Command::Mongo do
   end
 
   it "fixes mongohq addresses so it can connect from outside EC2" do
-    uri = @mongo.send(:make_uri, 'mongo://root:secret@hatch.local.mongohq.com/mydb')
+    uri = @mongo.send(:make_uri, 'mongodb://root:secret@hatch.local.mongohq.com/mydb')
     uri.host.should == 'hatch.mongohq.com'
   end
 
@@ -39,9 +39,9 @@ describe Heroku::Command::Mongo do
     before do
       conn = Mongo::Connection.new
       @from     = conn.db('heroku-mongo-sync-origin')
-      @from_uri = URI.parse('mongo://localhost/heroku-mongo-sync-origin')
+      @from_uri = URI.parse('mongodb://localhost/heroku-mongo-sync-origin')
       @to       = conn.db('heroku-mongo-sync-dest')
-      @to_uri   = URI.parse('mongo://localhost/heroku-mongo-sync-dest')
+      @to_uri   = URI.parse('mongodb://localhost/heroku-mongo-sync-dest')
       clear_collections
     end
 
