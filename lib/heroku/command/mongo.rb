@@ -28,13 +28,27 @@ module Heroku::Command
         origin.collections.each do |col|
           next if col.name =~ /^system\./
 
-          display "Syncing #{col.name} (#{col.size})...", false
           dest.drop_collection(col.name)
           dest_col = dest.create_collection(col.name)
+
+          count = col.size
+          index = 0
+          step  = count / 100000 # 1/1000 of a percent
+          step  = 1 if step == 0
+
           col.find().each do |record|
             dest_col.insert record
+
+            if (index += 1) % step == 0
+              display(
+                "\r#{"Syncing #{col.name}: %d of %d (%.2f%%)... " %
+                [index, count, (index.to_f/count * 100)]}",
+                false
+              )
+            end
           end
-          display " done"
+
+          display "\n done"
         end
 
         display "Syncing indexes...", false
