@@ -16,7 +16,7 @@ module Heroku::Command
     end
 
     def pull
-      display "Replacing the #{app} db at #{local_mongo_uri.host} with #{heroku_mongo_uri.host}"
+      display "Replacing the #{local_mongo_uri.path[1..-1]} db at #{local_mongo_uri.host} with #{heroku_mongo_uri.host}"
       transfer(heroku_mongo_uri, local_mongo_uri)
     end
 
@@ -50,15 +50,21 @@ module Heroku::Command
       end
 
       def heroku_mongo_uri
-        config = heroku.config_vars(app)
-        url    = config['MONGO_URL'] || config['MONGOHQ_URL']
-        error("Could not find the MONGO_URL for #{app}") unless url
-        make_uri(url)
+        if @remote_uri.nil?
+          config = heroku.config_vars(app)
+          url    = config['MONGO_URL'] || config['MONGOHQ_URL']
+          error("Could not find the MONGO_URL for #{app}") unless url
+          @remote_uri = make_uri(url)
+        end
+        @remote_uri
       end
 
       def local_mongo_uri
-        url = ENV['MONGO_URL'] || "mongodb://localhost:27017/#{app}"
-        make_uri(url)
+        if @local_uri.nil?
+          url = ENV['MONGO_URL'].dup || "mongodb://localhost:27017/#{app}"
+          @local_uri = make_uri(url)
+        end
+        @local_uri
       end
 
       def make_uri(url)
