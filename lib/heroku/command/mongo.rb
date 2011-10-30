@@ -17,6 +17,8 @@ module Heroku::Command
 
     def pull
       display "Replacing the #{local_mongo_uri.path[1..-1]} db at #{local_mongo_uri.host} with #{heroku_mongo_uri.host}"
+      display "Are you sure? (y/n) ", false
+      return unless ask.downcase == 'y'
       transfer(heroku_mongo_uri, local_mongo_uri)
     end
 
@@ -61,7 +63,7 @@ module Heroku::Command
 
       def local_mongo_uri
         if @local_uri.nil?
-          url = ENV['MONGO_URL'].dup || "mongodb://localhost:27017/#{app}"
+          url = ENV['MONGO_URL'] ? ENV['MONGO_URL'].dup : "mongodb://localhost:27017/#{app}"
           @local_uri = make_uri(url)
         end
         @local_uri
