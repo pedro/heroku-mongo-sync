@@ -62,8 +62,8 @@ module Heroku::Command
       end
 
       def make_uri(url)
-        url.gsub!('local.mongohq.com', 'mongohq.com')
-        uri = URI.parse(url)
+        urlsub = url.gsub('local.mongohq.com', 'mongohq.com')
+        uri = URI.parse(urlsub)
         raise URI::InvalidURIError unless uri.host
         uri
       rescue URI::InvalidURIError
